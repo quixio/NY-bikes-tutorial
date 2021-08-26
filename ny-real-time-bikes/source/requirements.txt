@@ -1,0 +1,2 @@
+quixstreaming==0.3.0a202106102346
+requests
