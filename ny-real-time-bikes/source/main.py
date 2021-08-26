@@ -3,6 +3,7 @@ from quixstreaming import *
 from datetime import datetime
 import pandas as pd
 import time
+import traceback
 from datetime import timezone
 from ny_bikes_API import get_agg_data
 
