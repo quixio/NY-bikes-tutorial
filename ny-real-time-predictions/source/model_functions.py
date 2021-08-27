@@ -17,22 +17,47 @@ def get_saved_models():
     ml_model_1day = get_saved_model("ML_1day_Forecast")
     return ml_model_1h, ml_model_1day
 
-def get_X_predict(current_ny_time, df_weather):    
-    
+
+def get_X_predict(current_ny_time, df_weather, df_bikes):
+    # Add timestamp
     df_X = pd.DataFrame({'timestamp_ny': [current_ny_time]})
-    
+
+    # Add current number of bikes
+    df_X['total_num_bikes_available'] = int(df_bikes.loc[0, 'total_num_bikes_available'])
+
+    # Add weather variables
+    df_X['feelslike_temp_c'] = float(df_weather.loc[df_weather['TAG__Forecast'] == 'Current', 'feelslike_temp_c'])
+    df_X['wind_kph'] = float(df_weather.loc[df_weather['TAG__Forecast'] == 'Current', 'wind_kph'])
+    df_X['feelslike_temp_c_24'] = float(df_weather.loc[df_weather['TAG__Forecast'] == 'NextDay', 'feelslike_temp_c'])
+    df_X['wind_kph_24'] = float(df_weather.loc[df_weather['TAG__Forecast'] == 'NextDay', 'wind_kph'])
+
+    for col_i in ['condition_Clear', 'condition_Clouds', 'condition_Rain', 'condition_Snow']:
+        if col_i.split('_')[-1] == str(df_weather.loc[df_weather['TAG__Forecast'] == 'Current', 'condition'][0]):
+            df_X[col_i] = 1
+        else:
+            df_X[col_i] = 0
+
+    for col_i in ['condition_24_Clear', 'condition_24_Clouds', 'condition_24_Rain', 'condition_24_Snow']:
+        if col_i.split('_')[-1] == str(df_weather.loc[df_weather['TAG__Forecast'] == 'NextDay', 'condition'][1]):
+            df_X[col_i] = 1
+        else:
+            df_X[col_i] = 0
+
+    # Add time variables
     df_X['year'] = df_X['timestamp_ny'].dt.year
     df_X['month'] = df_X['timestamp_ny'].dt.month
     df_X['day'] = df_X['timestamp_ny'].dt.day
     df_X['hour'] = df_X['timestamp_ny'].dt.hour
     df_X['minute'] = df_X['timestamp_ny'].dt.minute
     df_X['dayofweek'] = df_X['timestamp_ny'].dt.dayofweek
-    
-    df_X['feelslike_temp_c_24'] = float(df_weather.loc[df_weather['TAG__Forecast']=='NextDay', 'feelslike_temp_c'])
-    df_X['wind_kph_24'] = float(df_weather.loc[df_weather['TAG__Forecast']=='NextDay', 'wind_kph'])
-    df_X['condition_24'] = df_weather.loc[df_weather['TAG__Forecast']=='NextDay', 'condition']
 
-    return df_X
+    cols_to_return = ['timestamp_ny', 'total_num_bikes_available',
+                      'wind_kph', 'feelslike_temp_c', 'wind_kph_24', 'feelslike_temp_c_24',
+                      'condition_Clear', 'condition_Clouds', 'condition_Rain', 'condition_Snow',
+                      'condition_24_Clear', 'condition_24_Clouds', 'condition_24_Rain', 'condition_24_Snow',
+                      'year', 'month', 'day', 'hour', 'minute', 'dayofweek']
+
+    return df_X[cols_to_return]
 
 def generate_predictions(current_ny_time, df_bikes, df_weather, ml_model_1h, ml_model_1day):
 
