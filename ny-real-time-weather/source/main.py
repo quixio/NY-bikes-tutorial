@@ -2,18 +2,19 @@ from datetime import datetime
 import pandas as pd
 import time
 import os
-from quixstreaming import *
+from quixstreaming import SecurityOptions, StreamingClient
+import traceback
 
 from ny_weather_API import perform_API_request, get_current_weather, get_tomorrow_weather
 from datetime import timezone
 
 # Fill variables
-certificatePath = {placeholder:broker.security.certificatepath}
-username = {placeholder:broker.security.username}
-password = {placeholder:broker.security.password}
-broker = {placeholder:broker.security.broker}
-topic_id = {placeholder:topic}
-openweather_api_key = {placeholder:openweatherkey}
+certificatePath = "{placeholder:broker.security.certificatepath}"
+username = "{placeholder:broker.security.username}"
+password = "{placeholder:broker.security.password}"
+broker = "{placeholder:broker.address}"
+topic_id = "{placeholder:outputTopic}"
+openweather_api_key = "{placeholder:openweatherkey}"
 
 # Create a client factory. Factory helps you create StreamingClient (see below) a little bit easier
 security = SecurityOptions(certificatePath, username, password)
