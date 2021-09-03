@@ -1,6 +1,6 @@
 import pandas as pd
 
-from quixstreaming import *
+from quixstreaming import SecurityOptions, StreamingClient, StreamReader
 from quixstreaming.models.parametersbufferconfiguration import ParametersBufferConfiguration
 import signal
 import threading
@@ -8,13 +8,13 @@ import threading
 from model_functions import get_saved_models, predict_bikes_availability_and_write_into_streams
 
 # Fill variables
-certificatePath = {placeholder:broker.security.certificatepath}
-username = {placeholder:broker.security.username}
-password = {placeholder:broker.security.password}
-broker = {placeholder:broker.broker}
-input_bikes_topic_id = {placeholder:topic_input_bikes}
-input_weather_topic_id = {placeholder:topic_input_weather}
-output_prediction_topic_id = {placeholder:topic_output_prediction}
+certificatePath = "{placeholder:broker.security.certificatepath}"
+username = "{placeholder:broker.security.username}"
+password = "{placeholder:broker.security.password}"
+broker = "{placeholder:broker.address}"
+input_bikes_topic_id = "{placeholder:inputTopic}"
+input_weather_topic_id = "{placeholder:weatherTopic}"
+output_prediction_topic_id = "{placeholder:outputTopic}"
 
 # Create a client factory. Factory helps you create StreamingClient (see below) a little bit easier
 security = SecurityOptions(certificatePath, username, password)
