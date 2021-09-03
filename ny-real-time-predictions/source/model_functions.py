@@ -1,8 +1,9 @@
 import base64
 import pickle
 import pandas as pd
-from datetime import datetime,  timezone, timedelta
+from datetime import datetime, timezone, timedelta
 from dateutil import tz
+
 
 def get_saved_model(model_name):
     with open('./MLModels/' + model_name + ".pickle") as file:
@@ -12,10 +13,11 @@ def get_saved_model(model_name):
     print("Loaded model " + model_name)
     return response_pickle
 
+
 def get_saved_models():
-    ml_model_1h = get_saved_model("ML_1h_Forecast")
-    ml_model_1day = get_saved_model("ML_1day_Forecast")
-    return ml_model_1h, ml_model_1day
+    dic_ml_model_1h = get_saved_model("ML_1h_Forecast")
+    dic_ml_model_1d = get_saved_model("ML_1day_Forecast")
+    return dic_ml_model_1h, dic_ml_model_1d
 
 
 def get_X_predict(current_ny_time, df_weather, df_bikes):
@@ -59,29 +61,32 @@ def get_X_predict(current_ny_time, df_weather, df_bikes):
 
     return df_X[cols_to_return]
 
-def generate_predictions(current_ny_time, df_bikes, df_weather, ml_model_1h, ml_model_1day):
 
-    df_X = get_X_predict(current_ny_time, df_weather)
-    
-    cols_1h = ['hour', 'dayofweek']
-    cols_1d = ['hour', 'dayofweek', 'wind_kph_24', 'feelslike_temp_c_24']
-    
+def generate_predictions(current_ny_time, df_bikes, df_weather, dic_ml_model_1h, dic_ml_model_1d):
+    df_X = get_X_predict(current_ny_time, df_weather, df_bikes)
+
+    ml_model_1h = dic_ml_model_1h['model']
+    cols_1h = dic_ml_model_1h['variables']
+    ml_model_1d = dic_ml_model_1d['model']
+    cols_1d = dic_ml_model_1d['variables']
+
     current_n_bikes = int(df_bikes['total_num_bikes_available'][0])
-    
+
     df_pred_1h = pd.DataFrame({
-        'timestamp_ny': [current_ny_time + timedelta(hours=1)], 
-        'timestamp_ny_execution': [str(current_ny_time)], 
+        'timestamp_ny': [current_ny_time + timedelta(hours=1)],
+        'timestamp_ny_execution': [str(current_ny_time)],
         'forecast_1h': [current_n_bikes + int(ml_model_1h.predict(df_X[cols_1h]))]})
-    
+
     df_pred_1day = pd.DataFrame({
-        'timestamp_ny': [current_ny_time + timedelta(hours=24)], 
-        'timestamp_ny_execution': [str(current_ny_time)], 
-        'forecast_1d': [current_n_bikes + int(ml_model_1day.predict(df_X[cols_1d]))]})
-    
+        'timestamp_ny': [current_ny_time + timedelta(hours=24)],
+        'timestamp_ny_execution': [str(current_ny_time)],
+        'forecast_1d': [current_n_bikes + int(ml_model_1d.predict(df_X[cols_1d]))]})
+
     return df_pred_1h, df_pred_1day
 
-def predict_bikes_availability_and_write_into_streams(df_bikes, df_weather, ml_model_1h, ml_model_1day, stream_0, stream_1, stream_2):
 
+def predict_bikes_availability_and_write_into_streams(df_bikes, df_weather, dic_ml_model_1h, dic_ml_model_1d, stream_0,
+                                                      stream_1, stream_2):
     # If any of the dataframes is empty we cannot predict, so let's check that
     if ((df_bikes.empty) | (df_weather.empty)):
         return
@@ -91,7 +96,8 @@ def predict_bikes_availability_and_write_into_streams(df_bikes, df_weather, ml_m
     current_ny_time = pd.to_datetime(current_time).astimezone(tz.gettz('America/New_York'))
 
     # Perform Predictions
-    df_pred_1h, df_pred_1day = generate_predictions(current_ny_time, df_bikes, df_weather, ml_model_1h, ml_model_1day)      
+    df_pred_1h, df_pred_1day = generate_predictions(current_ny_time, df_bikes, df_weather, dic_ml_model_1h,
+                                                    dic_ml_model_1d)
 
     # We write in 3 different streams to define 3 different timestamps
     # Write stream_0: real number of available bikes now
@@ -101,17 +107,18 @@ def predict_bikes_availability_and_write_into_streams(df_bikes, df_weather, ml_m
         .write()
 
     # Write stream_1: 1 hour ahead prediction
-    stream_1.parameters.buffer.add_timestamp(df_pred_1h.loc[0,'timestamp_ny']) \
-        .add_value('timestamp_ny_execution', df_pred_1h.loc[0,'timestamp_ny_execution']) \
-        .add_value('forecast_1h', df_pred_1h.loc[0,'forecast_1h']) \
+    stream_1.parameters.buffer.add_timestamp(df_pred_1h.loc[0, 'timestamp_ny']) \
+        .add_value('timestamp_ny_execution', df_pred_1h.loc[0, 'timestamp_ny_execution']) \
+        .add_value('forecast_1h', df_pred_1h.loc[0, 'forecast_1h']) \
         .write()
-    
+
     # Write stream_2: 1 day ahead prediction
-    stream_2.parameters.buffer.add_timestamp(df_pred_1day.loc[0,'timestamp_ny']) \
-        .add_value('timestamp_ny_execution', df_pred_1day.loc[0,'timestamp_ny_execution']) \
-        .add_value('forecast_1d', df_pred_1day.loc[0,'forecast_1d']) \
+    stream_2.parameters.buffer.add_timestamp(df_pred_1day.loc[0, 'timestamp_ny']) \
+        .add_value('timestamp_ny_execution', df_pred_1day.loc[0, 'timestamp_ny_execution']) \
+        .add_value('forecast_1d', df_pred_1day.loc[0, 'forecast_1d']) \
         .write()
 
     # Print some predictions data
     print('NY time:', current_ny_time)
-    print('Current n bikes:', int(df_bikes.loc[0, 'total_num_bikes_available']), 'Forecast 1h:', df_pred_1h.loc[0,'forecast_1h'], 'Forecast 1 day:',  df_pred_1day.loc[0,'forecast_1d'])
+    print('Current n bikes:', int(df_bikes.loc[0, 'total_num_bikes_available']), 'Forecast 1h:',
+          df_pred_1h.loc[0, 'forecast_1h'], 'Forecast 1 day:', df_pred_1day.loc[0, 'forecast_1d'])
