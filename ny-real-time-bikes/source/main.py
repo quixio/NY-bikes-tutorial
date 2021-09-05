@@ -3,8 +3,8 @@ from quixstreaming import *
 from datetime import datetime
 import pandas as pd
 import time
-import traceback
 from datetime import timezone
+import os
 from ny_bikes_API import get_agg_data
 
 # Placeholder variables
@@ -32,20 +32,20 @@ while True:
     try:
         # Current timestamp
         current_time_i = datetime.now(timezone.utc)
-        
+
         # ToL API Request
         df_i_agg = get_agg_data()
-        total_bikes = df_i_agg.loc[0,'num_bikes_available']+df_i_agg.loc[0,'num_ebikes_available']                    
+        total_bikes = df_i_agg.loc[0, 'num_bikes_available'] + df_i_agg.loc[0, 'num_ebikes_available']
 
         # Write stream 
         stream.parameters.buffer.add_timestamp(current_time_i) \
             .add_value('total_num_bikes_available', total_bikes) \
-            .add_value('num_docks_available', df_i_agg.loc[0,'num_docks_available']) \
+            .add_value('num_docks_available', df_i_agg.loc[0, 'num_docks_available']) \
             .write()
 
         # How long did the Request and transformation take
         current_time_j = datetime.now(timezone.utc)
-        int_sec = int((current_time_j-current_time_i).seconds)
+        int_sec = int((current_time_j - current_time_i).seconds)
         print(current_time_i, current_time_j, int_sec, ' bikes: ', total_bikes)
 
     except Exception:

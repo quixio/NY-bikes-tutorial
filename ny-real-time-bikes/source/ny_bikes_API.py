@@ -24,5 +24,5 @@ def get_agg_data():
     df.sort_index(ascending=True, inplace=True)
 
     df_agg = df.sum().reset_index().set_index('index').T
-    
+
     return df_agg
