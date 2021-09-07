@@ -13,7 +13,7 @@ username = "{placeholder:broker.security.username}"
 password = "{placeholder:broker.security.password}"
 broker = "{placeholder:broker.address}"
 input_bikes_topic_id = "{placeholder:inputTopic}"
-input_weather_topic_id = "{placeholder:weatherTopic}"
+input_weather_topic_id = "{placeholder:inputTopic_Weather}"
 output_prediction_topic_id = "{placeholder:outputTopic}"
 
 # Create a client factory. Factory helps you create StreamingClient (see below) a little bit easier

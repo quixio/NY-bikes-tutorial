@@ -4,10 +4,7 @@
     <list default="true" id="19a02984-6834-4679-93ae-d36bcb1e657b" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ny-real-time-bikes/source/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/ny-real-time-bikes/source/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ny-real-time-bikes/source/ny_bikes_API.py" beforeDir="false" afterPath="$PROJECT_DIR$/ny-real-time-bikes/source/ny_bikes_API.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ny-real-time-predictions/source/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/ny-real-time-predictions/source/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ny-real-time-weather/source/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/ny-real-time-weather/source/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ny-real-time-weather/source/ny_weather_API.py" beforeDir="false" afterPath="$PROJECT_DIR$/ny-real-time-weather/source/ny_weather_API.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -26,7 +23,7 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$USER_HOME$/Quix.Portal.Samples/python" />
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">

@@ -4,15 +4,14 @@ from datetime import datetime
 import pandas as pd
 import time
 from datetime import timezone
-import os
 from ny_bikes_API import get_agg_data
 
 # Placeholder variables
-certificatePath = {placeholder:broker.security.certificatepath}
-username = {placeholder:broker.security.username}
-password = {placeholder:broker.security.password}
-broker = {placeholder:broker.broker}
-topic_id = {placeholder:topic}
+certificatePath = "{placeholder:broker.security.certificatepath}"
+username = "{placeholder:broker.security.username}"
+password = "{placeholder:broker.security.password}"
+broker = "{placeholder:broker.address}"
+topic_id = {'{placeholder:outputTopic}'}
 
 # Create a client factory. Factory helps you create StreamingClient (see below) a little bit easier
 security = SecurityOptions(certificatePath, username, password)
